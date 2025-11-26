@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>School Exhibition — All Subjects (Up to Class 12)</title>
+  <meta name="description" content="Interactive, responsive single-file website for a school exhibition covering Math, Physics & Chemistry up to Class 12. Includes calculators, quick references, quizzes, light/dark mode." />
+  <style>
+    :root{
+      --bg:#f6f8fb; --card:#ffffff; --text:#0f1724; --muted:#556; --accent:#0066ff; --glass: rgba(255,255,255,0.6);
+    }
+    [data-theme="dark"]{ --bg:#0b1220; --card:#071127; --text:#e6eef8; --muted:#9fb0c7; --accent:#60a5fa; --glass: rgba(255,255,255,0.04);} 
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,'Helvetica Neue',Arial; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased}
+    .container{max-width:1100px;margin:28px auto;padding:18px}
+
+    header{display:flex;gap:12px;align-items:center;justify-content:space-between}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#00a3ff);display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+    h1{margin:0;font-size:20px}
+    p.lead{margin:0;color:var(--muted)}
+
+    nav{margin-top:18px;display:flex;gap:8px;flex-wrap:wrap}
+    .pill{background:var(--card);padding:8px 12px;border-radius:999px;border:1px solid rgba(0,0,0,0.04);cursor:pointer}
+
+    main{margin-top:20px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+    .card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 6px 18px rgba(10,10,10,0.06);min-height:120px}
+    .card h3{margin:0 0 8px 0}
+    .muted{color:var(--muted);font-size:13px}
+
+    /* Calculator layout */
+    .calc-grid{display:grid;grid-template-columns:1fr;gap:12px}
+    label{display:block;font-size:13px;margin-bottom:6px}
+    input,select,textarea{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);background:transparent;color:var(--text)}
+    button.btn{padding:10px 14px;border-radius:10px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+    .result{padding:10px;border-radius:8px;background:var(--glass);margin-top:8px}
+
+    footer{margin-top:28px;text-align:center;color:var(--muted);font-size:13px}
+
+    /* Responsive header controls */
+    .controls{display:flex;gap:10px;align-items:center}
+    .toggle{display:inline-flex;align-items:center;padding:6px;border-radius:999px;background:var(--card);cursor:pointer}
+
+    /* small tweaks */
+    pre{background:rgba(0,0,0,0.03);padding:10px;border-radius:8px;overflow:auto}
+    .subject-list{display:flex;gap:8px;flex-wrap:wrap}
+    .subject-btn{padding:10px 12px;border-radius:10px;border:1px solid rgba(0,0,0,0.06);background:var(--card);cursor:pointer}
+
+    /* quiz */
+    .quiz-q{margin:10px 0}
+
+    @media (max-width:520px){ .brand h1{font-size:16px} }
+
+  </style>
+</head>
+<body data-theme="light">
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">SE</div>
+        <div>
+          <h1>School Exhibition — Class 1 to 12</h1>
+          <p class="lead">Interactive tools & quick references for Math, Physics & Chemistry — responsive, fast & offline.</p>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="toggle" id="themeToggle" title="Toggle dark / light">🌙 / ☀️</div>
+        <div class="toggle" id="downloadBtn" title="Download single HTML">⬇️ Save</div>
+      </div>
+    </header>
+
+    <nav>
+      <div class="pill" data-target="home">Home</div>
+      <div class="pill" data-target="math">Math</div>
+      <div class="pill" data-target="physics">Physics</div>
+      <div class="pill" data-target="chemistry">Chemistry</div>
+      <div class="pill" data-target="quiz">Quiz</div>
+      <div class="pill" data-target="resources">Resources</div>
+    </nav>
+
+    <main>
+      <section id="home" class="panel">
+        <div class="grid">
+          <div class="card">
+            <h3>Overview</h3>
+            <p class="muted">This single-file website contains interactive calculators, quick formula references, and small quizzes for students up to class 12. Use the navigation above or the subject cards below.</p>
+          </div>
+          <div class="card">
+            <h3>Features</h3>
+            <ul class="muted">
+              <li>Math: Basic calculator, quadratic solver, geometry area/perimeter, matrices (basic)</li>
+              <li>Physics: Kinematics, forces, energy, electricity formulas</li>
+              <li>Chemistry: Moles & molarity, mass-to-moles, simple reaction types</li>
+              <li>Light/Dark mode, responsive layout, works offline (single HTML file)</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3 style="margin-top:14px">Jump to subject</h3>
+        <div class="subject-list">
+          <button class="subject-btn" data-target="math">Math</button>
+          <button class="subject-btn" data-target="physics">Physics</button>
+          <button class="subject-btn" data-target="chemistry">Chemistry</button>
+          <button class="subject-btn" data-target="quiz">Quiz</button>
+        </div>
+      </section>
+
+      <!-- MATH -->
+      <section id="math" class="panel" style="display:none;margin-top:12px">
+        <div class="grid">
+          <div class="card">
+            <h3>Basic Calculator</h3>
+            <div class="calc-grid">
+              <label>Expression (use + - * / ^ for power)</label>
+              <input id="expr" placeholder="e.g. (2+3)*5 - 4/2" />
+              <button class="btn" onclick="evalExpr()">Evaluate</button>
+              <div id="exprRes" class="result">Result will appear here</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Quadratic Solver (ax² + bx + c = 0)</h3>
+            <div class="calc-grid">
+              <label>a</label><input id="qa" type="number" step="any" value="1" />
+              <label>b</label><input id="qb" type="number" step="any" value="0" />
+              <label>c</label><input id="qc" type="number" step="any" value="-1" />
+              <button class="btn" onclick="solveQuadratic()">Solve</button>
+              <div id="qRes" class="result">Roots will appear here</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Geometry — Area & Perimeter</h3>
+            <div class="calc-grid">
+              <label>Shape</label>
+              <select id="shapeSel" onchange="renderShapeInputs()">
+                <option value="circle">Circle</option>
+                <option value="rectangle">Rectangle</option>
+                <option value="triangle">Triangle (base & height)</option>
+              </select>
+              <div id="shapeInputs"></div>
+              <button class="btn" onclick="computeShape()">Compute</button>
+              <div id="shapeRes" class="result"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Algebra / Matrix — 2x2 Determinant</h3>
+            <div class="calc-grid">
+              <label>Matrix entries (2x2)</label>
+              <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+                <input id="m11" placeholder="a11" type="number" step="any" />
+                <input id="m12" placeholder="a12" type="number" step="any" />
+                <input id="m21" placeholder="a21" type="number" step="any" />
+                <input id="m22" placeholder="a22" type="number" step="any" />
+              </div>
+              <button class="btn" onclick="det2x2()">Determinant</button>
+              <div id="detRes" class="result"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PHYSICS -->
+      <section id="physics" class="panel" style="display:none;margin-top:12px">
+        <div class="grid">
+          <div class="card">
+            <h3>Kinematics (SUVAT-like)</h3>
+            <div class="calc-grid">
+              <label>Initial velocity u (m/s)</label><input id="u" type="number" step="any" />
+              <label>Final velocity v (m/s)</label><input id="v" type="number" step="any" />
+              <label>Acceleration a (m/s²)</label><input id="a" type="number" step="any" />
+              <label>Time t (s)</label><input id="t" type="number" step="any" />
+              <button class="btn" onclick="computeKinematics()">Compute missing</button>
+              <div id="kinRes" class="result">Hints: enter values you know and leave the one you want blank.</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Forces & Energy</h3>
+            <div class="calc-grid">
+              <label>Mass (kg)</label><input id="mass" type="number" step="any" />
+              <label>Acceleration (m/s²)</label><input id="acc" type="number" step="any" />
+              <button class="btn" onclick="computeForce()">Compute Force (F=ma)</button>
+              <div id="forceRes" class="result"></div>
+
+              <label style="margin-top:8px">Mass (kg) for energy calculations</label><input id="massE" type="number" step="any" />
+              <label>Velocity (m/s)</label><input id="velE" type="number" step="any" />
+              <button class="btn" onclick="computeKE()">Compute KE (1/2 m v²)</button>
+              <div id="keRes" class="result"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Electricity — Ohm's Law</h3>
+            <div class="calc-grid">
+              <label>Voltage (V)</label><input id="volt" type="number" step="any" />
+              <label>Current (A)</label><input id="curr" type="number" step="any" />
+              <label>Resistance (Ω)</label><input id="resist" type="number" step="any" />
+              <button class="btn" onclick="ohmSolve()">Solve</button>
+              <div id="ohmRes" class="result">Enter any two values to get the third.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CHEMISTRY -->
+      <section id="chemistry" class="panel" style="display:none;margin-top:12px">
+        <div class="grid">
+          <div class="card">
+            <h3>Moles & Molarity</h3>
+            <div class="calc-grid">
+              <label>Mass of substance (g)</label><input id="massC" type="number" step="any" />
+              <label>Molar mass (g/mol)</label><input id="mm" type="number" step="any" />
+              <button class="btn" onclick="massToMoles()">Mass → Moles</button>
+              <div id="molesRes" class="result"></div>
+
+              <label style="margin-top:8px">Number of moles</label><input id="molesForM" type="number" step="any" />
+              <label>Volume (L)</label><input id="volL" type="number" step="any" />
+              <button class="btn" onclick="computeMolarity()">Compute Molarity (M = n / V)</button>
+              <div id="molRes" class="result"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Simple Reaction Types</h3>
+            <p class="muted">Use this quick reference for common reaction types: Combination, Decomposition, Displacement, Double Displacement, Redox, Acid-Base.</p>
+            <pre>Example: 2H2 + O2 → 2H2O (Combination)
+Zn + 2HCl → ZnCl2 + H2 (Displacement)</pre>
+          </div>
+
+          <div class="card">
+            <h3>pH & Dilution</h3>
+            <div class="calc-grid">
+              <label>Concentration of H⁺ (mol/L)</label><input id="hconc" type="number" step="any" />
+              <button class="btn" onclick="computePH()">Compute pH</button>
+              <div id="phRes" class="result"></div>
+
+              <label style="margin-top:8px">Initial concentration (M)</label><input id="c1" type="number" step="any" />
+              <label>Final volume (L)</label><input id="v2" type="number" step="any" />
+              <label>Initial volume (L)</label><input id="v1" type="number" step="any" />
+              <button class="btn" onclick="dilution()">Dilution (C1V1 = C2V2)</button>
+              <div id="dilRes" class="result"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- QUIZ -->
+      <section id="quiz" class="panel" style="display:none;margin-top:12px">
+        <div class="card">
+          <h3>Quick Quiz (sample)</h3>
+          <div id="quizArea"></div>
+          <button class="btn" onclick="gradeQuiz()">Submit Answers</button>
+          <div id="quizRes" class="result"></div>
+        </div>
+      </section>
+
+      <!-- RESOURCES -->
+      <section id="resources" class="panel" style="display:none;margin-top:12px">
+        <div class="card">
+          <h3>Study Resources & Tips</h3>
+          <ul class="muted">
+            <li>Math: Practice problem sets, show steps for each solution.</li>
+            <li>Physics: Derive formulae from first principles where possible.</li>
+            <li>Chemistry: Memorize key molar masses and common reaction patterns.</li>
+            <li>Tip: Use the calculators here to check work, but always write steps for exams.</li>
+          </ul>
+        </div>
+      </section>
+
+    </main>
+
+    <footer>
+      Built for school exhibition • Works offline • Single-file HTML
+    </footer>
+  </div>
+
+  <script>
+    // Basic navigation
+    document.querySelectorAll('[data-target]').forEach(el=>el.addEventListener('click',e=>{
+      const t = e.currentTarget.dataset.target;
+      showPanel(t);
+    }));
+    document.querySelectorAll('.subject-btn').forEach(b=>b.addEventListener('click',e=>showPanel(e.currentTarget.dataset.target)));
+
+    function showPanel(id){
+      document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
+      const el = document.getElementById(id);
+      if(el) el.style.display='block';
+      window.location.hash = id;
+    }
+
+    // Initialize panel from hash
+    const initial = location.hash ? location.hash.replace('#','') : 'home';
+    showPanel(initial);
+
+    // Theme toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const downloadBtn = document.getElementById('downloadBtn');
+    function setTheme(theme){ document.body.setAttribute('data-theme',theme); localStorage.setItem('siteTheme',theme); }
+    themeToggle.addEventListener('click',()=>{
+      const cur = document.body.getAttribute('data-theme') === 'light' ? 'dark':'light';
+      setTheme(cur);
+    });
+    // load saved
+    const saved = localStorage.getItem('siteTheme') || 'light'; setTheme(saved);
+
+    // Download single file
+    downloadBtn.addEventListener('click', ()=>{
+      const blob = new Blob([document.documentElement.outerHTML], {type:'text/html'});
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'school-exhibition.html'; a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    // MATH functions
+    function safeEval(expr){
+      // basic safe parser: allow numbers and operators only
+      if(!expr) return 'Empty';
+      if(/[^0-9+\-*/().^ %eE]/.test(expr)) return 'Invalid characters';
+      try{
+        const sanitized = expr.replace(/\^/g,'**');
+        // eslint-disable-next-line no-eval
+        const val = eval(sanitized);
+        return val;
+      }catch(e){return 'Error';}
+    }
+    function evalExpr(){ const e=document.getElementById('expr').value; document.getElementById('exprRes').innerText = safeEval(e); }
+
+    function solveQuadratic(){
+      const a=Number(document.getElementById('qa').value);
+      const b=Number(document.getElementById('qb').value);
+      const c=Number(document.getElementById('qc').value);
+      if(a===0){ document.getElementById('qRes').innerText='a cannot be 0 for a quadratic'; return; }
+      const D=b*b-4*a*c;
+      if(D>0){ const r1=(-b+Math.sqrt(D))/(2*a); const r2=(-b-Math.sqrt(D))/(2*a); document.getElementById('qRes').innerText = `Two real roots: ${r1}, ${r2}`; }
+      else if(D===0){ const r=-b/(2*a); document.getElementById('qRes').innerText = `One real root: ${r}`; }
+      else{ const real = (-b/(2*a)).toFixed(4); const imag = (Math.sqrt(-D)/(2*a)).toFixed(4); document.getElementById('qRes').innerText = `Complex roots: ${real} ± ${imag}i`; }
+    }
+
+    function renderShapeInputs(){
+      const s=document.getElementById('shapeSel').value; const container=document.getElementById('shapeInputs'); container.innerHTML='';
+      if(s==='circle') container.innerHTML=`<label>Radius</label><input id='circle_r' type='number' step='any' />`;
+      if(s==='rectangle') container.innerHTML=`<label>Width</label><input id='rect_w' type='number' step='any' /><label>Height</label><input id='rect_h' type='number' step='any' />`;
+      if(s==='triangle') container.innerHTML=`<label>Base</label><input id='tri_b' type='number' step='any' /><label>Height</label><input id='tri_h' type='number' step='any' />`;
+    }
+    renderShapeInputs();
+    function computeShape(){ const s=document.getElementById('shapeSel').value; let out='';
+      if(s==='circle'){ const r=Number(document.getElementById('circle_r').value); if(!r){ out='Enter radius'; } else { out=`Area = ${Math.PI*r*r.toFixed(4)} ; Circumference = ${2*Math.PI*r}`; }}
+      if(s==='rectangle'){ const w=Number(document.getElementById('rect_w').value), h=Number(document.getElementById('rect_h').value); if(!w||!h) out='Enter both width and height'; else out=`Area = ${w*h} ; Perimeter = ${2*(w+h)}`; }
+      if(s==='triangle'){ const b=Number(document.getElementById('tri_b').value), h=Number(document.getElementById('tri_h').value); if(!b||!h) out='Enter base and height'; else out=`Area = ${0.5*b*h}`; }
+      document.getElementById('shapeRes').innerText = out;
+    }
+
+    function det2x2(){ const a=Number(document.getElementById('m11').value); const b=Number(document.getElementById('m12').value); const c=Number(document.getElementById('m21').value); const d=Number(document.getElementById('m22').value); const det=a*d - b*c; document.getElementById('detRes').innerText = 'Determinant = '+det; }
+
+    // PHYSICS functions
+    function computeKinematics(){
+      const u = parseFloat(document.getElementById('u').value);
+      const v = parseFloat(document.getElementById('v').value);
+      const a = parseFloat(document.getElementById('a').value);
+      const t = parseFloat(document.getElementById('t').value);
+      let res='';
+      // try to solve for missing single value if others present
+      const vals = {u:isFinite(u)?u:NaN, v:isFinite(v)?v:NaN, a:isFinite(a)?a:NaN, t:isFinite(t)?t:NaN};
+      const known = Object.values(vals).filter(v=>!isNaN(v)).length;
+      if(known<2){ res='Enter at least two values to compute another.'; }
+      else{
+        // common eqns: v = u + a t ; s = u t + 1/2 a t^2 ; v^2 = u^2 + 2 a s
+        if(isNaN(v) && !isNaN(u) && !isNaN(a) && !isNaN(t)) res = 'v = ' + (u + a*t);
+        else if(isNaN(u) && !isNaN(v) && !isNaN(a) && !isNaN(t)) res = 'u = ' + (v - a*t);
+        else if(isNaN(a) && !isNaN(v) && !isNaN(u) && !isNaN(t)) res = 'a = ' + ((v - u)/t);
+        else if(isNaN(t) && !isNaN(v) && !isNaN(u) && !isNaN(a)) res = 't = ' + ((v - u)/a);
+        else res = 'Combination not recognizable — try filling typical sets (u,v,t or u,a,t etc.)';
+      }
+      document.getElementById('kinRes').innerText = res;
+    }
+
+    function computeForce(){ const m=Number(document.getElementById('mass').value); const a=Number(document.getElementById('acc').value); if(!m||!a) document.getElementById('forceRes').innerText='Enter mass and acceleration'; else document.getElementById('forceRes').innerText = `Force = ${m*a} N`; }
+    function computeKE(){ const m=Number(document.getElementById('massE').value); const v=Number(document.getElementById('velE').value); if(!m||!v) document.getElementById('keRes').innerText='Enter mass and velocity'; else document.getElementById('keRes').innerText = `Kinetic Energy = ${0.5*m*v*v} J`; }
+
+    function ohmSolve(){ const V=Number(document.getElementById('volt').value); const I=Number(document.getElementById('curr').value); const R=Number(document.getElementById('resist').value); let out='';
+      if(V && I && !R) out = `R = V/I = ${V/I} Ω`;
+      else if(V && R && !I) out = `I = V/R = ${V/R} A`;
+      else if(I && R && !V) out = `V = I*R = ${I*R} V`;
+      else out = 'Enter any two values to compute the third.';
+      document.getElementById('ohmRes').innerText = out;
+    }
+
+    // CHEMISTRY
+    function massToMoles(){ const mass=Number(document.getElementById('massC').value); const mm=Number(document.getElementById('mm').value); if(!mass||!mm) document.getElementById('molesRes').innerText='Enter mass and molar mass'; else document.getElementById('molesRes').innerText = `Moles = ${mass/mm} mol`; }
+    function computeMolarity(){ const n=Number(document.getElementById('molesForM').value); const V=Number(document.getElementById('volL').value); if(!n||!V) document.getElementById('molRes').innerText='Enter moles and volume (L)'; else document.getElementById('molRes').innerText = `Molarity = ${n/V} M`; }
+    function computePH(){ const h=Number(document.getElementById('hconc').value); if(!h) document.getElementById('phRes').innerText='Enter [H+] concentration'; else document.getElementById('phRes').innerText = `pH = ${-Math.log10(h).toFixed(3)}`; }
+    function dilution(){ const C1=Number(document.getElementById('c1').value); const V1=Number(document.getElementById('v1').value); const V2=Number(document.getElementById('v2').value); if(!C1||!V1||!V2) document.getElementById('dilRes').innerText='Enter C1, V1 and V2'; else { const c2=(C1*V1)/V2; document.getElementById('dilRes').innerText = `C2 = ${c2} M`; } }
+
+    // QUIZ (sample questions)
+    const sampleQuiz = [
+      {q:'What is derivative of x^2?', opts:['2x','x','x^2','2'], a:0},
+      {q:'SI unit of Force?', opts:['Joule','Newton','Watt','Pascal'], a:1},
+      {q:'Molar mass of H2O (approx)?', opts:['18 g/mol','16 g/mol','20 g/mol','36 g/mol'], a:0}
+    ];
+    function renderQuiz(){ const qArea=document.getElementById('quizArea'); qArea.innerHTML=''; sampleQuiz.forEach((item,idx)=>{
+      const div=document.createElement('div'); div.className='quiz-q';
+      div.innerHTML = `<strong>Q${idx+1}.</strong> ${item.q}<br>` + item.opts.map((o,i)=>`<label><input type='radio' name='q${idx}' value='${i}'/> ${o}</label><br>`).join('');
+      qArea.appendChild(div);
+    }); }
+    renderQuiz();
+    function gradeQuiz(){ let score=0; sampleQuiz.forEach((item,idx)=>{ const sel = document.querySelector(`input[name='q${idx}']:checked`); if(sel && Number(sel.value)===item.a) score++; }); document.getElementById('quizRes').innerText = `Score: ${score} / ${sampleQuiz.length}`; }
+
+    // small usability: keyboard Enter in expression
+    document.getElementById('expr').addEventListener('keydown', e=>{ if(e.key==='Enter') evalExpr(); });
+
+    // Friendly note in console
+    console.log('School Exhibition single-file site loaded.');
+  </script>
+</body>
+</html>
